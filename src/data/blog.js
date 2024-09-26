@@ -33,7 +33,10 @@ const BlogValidation = Yup.object().shape({
     ),
 });
 
+const postsPerPage = 10;
+
 export const blogData = {
   BlogInitialValues,
   BlogValidation,
+  postsPerPage,
 };

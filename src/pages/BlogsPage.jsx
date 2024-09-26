@@ -1,27 +1,36 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import BlogCard from "../components/BlogCard";
 import { getAllBlogs } from "../services/blog.service";
 import CustomLoading from "../components/CustomLoading";
 import CustomEmptyState from "../components/EmptyState";
+import CustomPagination from "../components/CustomPagination";
 
 const BlogsPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [totalCount, setTotalCount] = useState(0);
+
+  const handlePagination = ({ pageNumber }) => {
+    setCurrentPage(pageNumber);
+  };
 
   useEffect(() => {
     async function getBlogs() {
       setLoading(true);
-      const response = await getAllBlogs();
+      const response = await getAllBlogs({ currentPage });
 
       if (response && response.data) {
         setBlogs(response.data);
+        setTotalCount(response.totalCount);
       }
 
       setLoading(false);
     }
 
     getBlogs();
-  }, []);
+  }, [currentPage]);
 
   return (
     <div className=" max-w-full px-10">
@@ -68,6 +77,11 @@ const BlogsPage = () => {
           </div>
         )}
       </section>
+      <CustomPagination
+        currentPage={currentPage}
+        length={totalCount}
+        handlePagination={handlePagination}
+      />
     </div>
   );
 };

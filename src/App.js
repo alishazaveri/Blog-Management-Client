@@ -3,13 +3,13 @@ import BlogsPage from "./pages/BlogsPage";
 import Navbar from "./components/Navbar";
 import CustomLoading from "./components/CustomLoading";
 import { createContext, useEffect, useState } from "react";
-import axios from "axios";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import CreateBlogPage from "./pages/CreateBlogPage";
 import MyBlogsPage from "./pages/MyBlogsPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
 import { verifyUser } from "./services/user.service";
+import NotFoundPage from "./pages/NotFoundPage";
 
 export const UserContext = createContext();
 
@@ -109,6 +109,7 @@ function App() {
               </MainLayout>
             }
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

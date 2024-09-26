@@ -1,5 +1,6 @@
 import { message } from "antd";
 import { SERVICE } from "./server";
+import { blogData } from "../data/blog";
 
 export async function addBlog({ blogImageUrl, title, description }) {
   try {
@@ -14,6 +15,9 @@ export async function addBlog({ blogImageUrl, title, description }) {
     if (error.response && error.response.status === 403) {
       message.error(error.response.data.error);
     }
+    if (error.response && error.response.status === 401) {
+      message.error("You are not authorized");
+    }
     if (error.response && error.response.status === 500) {
       message.error("Something went wrong");
       return { error: "" };
@@ -22,11 +26,13 @@ export async function addBlog({ blogImageUrl, title, description }) {
   }
 }
 
-export async function getAllBlogs() {
+export async function getAllBlogs({ currentPage }) {
   try {
-    const { data } = await SERVICE.get("/api/blog/");
+    const { data } = await SERVICE.get(
+      `/api/blog?page=${currentPage}&pageSize=${blogData.postsPerPage}`
+    );
 
-    return data;
+    return { data: data.data, totalCount: data.totalCount };
   } catch (error) {
     if (error.response && error.response.status === 403) {
       message.error(error.response.data.error);
@@ -39,14 +45,19 @@ export async function getAllBlogs() {
   }
 }
 
-export async function getAllBlogsByUserId() {
+export async function getAllBlogsByUserId({ currentPage }) {
   try {
-    const { data } = await SERVICE.get("/api/blog/user-blogs");
+    const { data } = await SERVICE.get(
+      `/api/blog/user-blogs?page=${currentPage}&pageSize=${blogData.postsPerPage}`
+    );
 
-    return data;
+    return { data: data.data, totalCount: data.totalCount };
   } catch (error) {
     if (error.response && error.response.status === 403) {
       message.error(error.response.data.error);
+    }
+    if (error.response && error.response.status === 401) {
+      message.error("You are not authorized");
     }
     if (error.response && error.response.status === 500) {
       message.error("Something went wrong");
@@ -82,6 +93,9 @@ export async function removeBlogById({ blogId }) {
     if (error.response && error.response.status === 403) {
       message.error(error.response.data.error);
     }
+    if (error.response && error.response.status === 401) {
+      message.error("You are not authorized");
+    }
     if (error.response && error.response.status === 500) {
       message.error("Something went wrong");
       return { error: "" };
@@ -107,6 +121,9 @@ export async function updateBlogById({
   } catch (error) {
     if (error.response && error.response.status === 403) {
       message.error(error.response.data.error);
+    }
+    if (error.response && error.response.status === 401) {
+      message.error("You are not authorized");
     }
     if (error.response && error.response.status === 500) {
       message.error("Something went wrong");
