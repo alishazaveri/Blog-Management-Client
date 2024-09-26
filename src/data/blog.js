@@ -20,7 +20,7 @@ const BlogValidation = Yup.object().shape({
   title: Yup.string()
     .trim()
     .required("Blog Title is required")
-    .min(3, "Blog Title should be atleast 5 letters"),
+    .min(5, "Blog Title should be atleast 5 letters"),
   blogImageUrl: Yup.string().trim().required("Blog Image is required"),
   description: Yup.string()
     .required("Blog Description is required")

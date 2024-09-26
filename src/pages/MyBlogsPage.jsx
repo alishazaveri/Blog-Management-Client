@@ -1,37 +1,61 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import BlogCard from "../components/BlogCard";
 import { UserContext } from "../App";
 import MyBlogCard from "../components/MyBlogCard";
+import { getAllBlogsByUserId } from "../services/blog.service";
+import CustomLoading from "../components/CustomLoading";
+import CustomEmptyState from "../components/EmptyState";
+import { useNavigate } from "react-router-dom";
 
 const MyBlogsPage = () => {
-  const user = useContext(UserContext);
+  const navigate = useNavigate();
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  console.log("User = ", user);
+  useEffect(() => {
+    getBlogs();
+  }, []);
+
+  async function getBlogs() {
+    setLoading(true);
+    const response = await getAllBlogsByUserId();
+
+    if (response && response.data) {
+      setBlogs(response.data);
+    }
+
+    setLoading(false);
+  }
+
   return (
     <div className=" max-w-full px-10">
       <section className="bg-white pb-10 pt-10  lg:pb-20 max-w-full w-full flex justify-center items-center">
-        <div className="container">
-          <div className="-mx-4 flex flex-wrap">
-            <MyBlogCard
-              date="Dec 22, 2023"
-              CardTitle="Meet AutoManage, the best AI management tools"
-              CardDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              image="https://i.ibb.co/Cnwd4q6/image-01.jpg"
-            />
-            <MyBlogCard
-              date="Dec 22, 2023"
-              CardTitle="Meet AutoManage, the best AI management tools"
-              CardDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              image="https://i.ibb.co/Y23YC07/image-02.jpg"
-            />
-            <MyBlogCard
-              date="Dec 22, 2023"
-              CardTitle="Meet AutoManage, the best AI management tools"
-              CardDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-              image="https://i.ibb.co/7jdcnwn/image-03.jpg"
-            />
+        {loading ? (
+          <CustomLoading />
+        ) : (
+          <div className="container">
+            <div className="-mx-4 flex flex-wrap">
+              {blogs && blogs.length > 0 ? (
+                blogs.map((blog) => (
+                  <div
+                    className="w-full sm:px-4 md:w-1/2 lg:w-1/3"
+                    key={blog._id}
+                  >
+                    <MyBlogCard
+                      date={blog.createdAt}
+                      CardTitle={blog.title}
+                      image={blog.blogImageUrl}
+                      blogId={blog._id}
+                      getBlogs={getBlogs}
+                    />
+                  </div>
+                ))
+              ) : (
+                <CustomEmptyState />
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </section>
     </div>
   );

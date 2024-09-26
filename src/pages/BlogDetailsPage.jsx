@@ -1,41 +1,65 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { getBlogById } from "../services/blog.service";
+import CustomLoading from "../components/CustomLoading";
+import { format } from "date-fns";
+import CustomEmptyState from "../components/EmptyState";
+import parse from "html-react-parser";
+
 const BlogDetailsPage = () => {
+  const { blogId } = useParams();
+
+  const [blog, setBlog] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function getBlog() {
+      setLoading(true);
+      const response = await getBlogById({ blogId });
+
+      if (response && response.data) {
+        setBlog(response.data);
+      }
+
+      setLoading(false);
+    }
+
+    getBlog();
+  }, [blogId]);
+
   return (
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="max-w-3xl mx-auto">
-        <div class="py-8">
-          <h1 class="text-3xl font-bold mb-2">Blog post title</h1>
-          <p class="text-gray-500 text-sm">
-            Published on{" "}
-            <time datetime="2022-04-05">April 5, 2022 by ALisha Zaveri</time>
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+      {loading ? (
+        <CustomLoading />
+      ) : (
+        <>
+          {blog && blog._id ? (
+            <div className="max-w-3xl mx-auto">
+              <div className="py-8">
+                <h1 className="text-3xl font-bold mb-2">Blog post title</h1>
+                <p className="text-gray-500 text-sm">
+                  Published on{" "}
+                  {format(new Date(blog.createdAt), "MMM dd, yyyy")} by{" "}
+                  {blog.userId.username}
+                </p>
+              </div>
 
-        <img
-          src="https://images.unsplash.com/photo-1493723843671-1d655e66ac1c"
-          alt="Featured image"
-          class="w-full h-auto mb-8"
-        />
+              <img
+                src={blog.blogImageUrl}
+                alt={blog.title}
+                className="w-full h-auto mb-8"
+              />
 
-        <div class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl mx-auto">
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-            varius fringilla augue, vel vestibulum nisl mattis vel. Praesent
-            porttitor pharetra purus eu tincidunt.
-          </p>
-          <p>
-            Nullam vitae sapien non est suscipit blandit quis sit amet ipsum.
-            Aliquam euismod accumsan nunc, in convallis felis luctus in. Sed
-            rhoncus metus a elit rutrum aliquam.
-          </p>
-          <p>
-            Integer ullamcorper leo nulla, nec commodo metus vehicula eget. Duis
-            vel vestibulum tellus, eget mattis quam. Nullam euismod libero sed
-            nibh tristique, vel eleifend risus sagittis. In hac habitasse platea
-            dictumst. Sed dapibus magna at arcu euismod, a pulvinar turpis
-            tristique. Suspendisse imperdiet velit nec lectus rutrum varius.
-          </p>
-        </div>
-      </div>
+              <div className=" mx-auto react-quill-custom">
+                {" "}
+                {parse(blog.description)}
+              </div>
+            </div>
+          ) : (
+            <CustomEmptyState />
+          )}
+        </>
+      )}
     </div>
   );
 };

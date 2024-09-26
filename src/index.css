@@ -7,3 +7,26 @@
   margin: 0;
   padding: 0;
 }
+
+.react-quill-custom ol li {
+  list-style: decimal;
+  margin-left: 20px;
+
+}
+
+.react-quill-custom ul li {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+.react-quill-custom h1 {
+  font-size: 34px;
+}
+
+.react-quill-custom h2 {
+  font-size: 30px;
+}
+
+.react-quill-custom h3 {
+  font-size: 24px;
+}

@@ -1,28 +1,31 @@
-import { Field, Form, Formik } from "formik";
-import { useState } from "react";
+import { Form, Formik } from "formik";
+import { useContext, useEffect } from "react";
 import { userData } from "../data/user";
-import { Input, Select } from "antd";
+import { Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import { addUser } from "../services/user.service";
+import { UserContext } from "../App";
 
-const RegisterPage = () => {
+const RegisterPage = ({ handleLogin }) => {
   const navigate = useNavigate();
+  const user = useContext(UserContext);
 
-  const [buttonLoading, setButtonLoading] = useState(false);
-
-  // useEffect(() => {
-  //   if (user && user._id) {
-  //     if (user.role === "admin") {
-  //       redirect("/admin/gamelist");
-  //     } else {
-  //       redirect("/user/gamelist");
-  //     }
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (user && user._id) {
+      navigate("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const onSignUpClick = async (values) => {
     const { username, imageUrl, emailId, password } = values;
-    setButtonLoading(true);
-    // register api
+
+    const response = await addUser({ username, imageUrl, emailId, password });
+
+    if (response.data) {
+      handleLogin(response.data);
+      navigate("/");
+    }
   };
 
   const onSignInClick = () => {
@@ -147,14 +150,7 @@ const RegisterPage = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
-                    {/* <Field
-                      placeholder="Confirm Password"
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      autoComplete="current-password"
-                      className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
-                    /> */}
+
                     {errors.confirmPassword &&
                       touched.confirmPassword &&
                       typeof errors.confirmPassword === "string" && (
@@ -162,12 +158,6 @@ const RegisterPage = () => {
                           {errors.confirmPassword}
                         </div>
                       )}
-                  </div>
-
-                  <div className="my-4">
-                    <div id="authInfo" className="text-sm text-red-500">
-                      {/* {error && error} */}
-                    </div>
                   </div>
 
                   <div>
