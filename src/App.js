@@ -9,6 +9,7 @@ import RegisterPage from "./pages/RegisterPage";
 import CreateBlogPage from "./pages/CreateBlogPage";
 import MyBlogsPage from "./pages/MyBlogsPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
+import { verifyUser } from "./services/user.service";
 
 export const UserContext = createContext();
 
@@ -20,30 +21,33 @@ const MainLayout = ({ children }) => (
 );
 
 function App() {
-  const accessToken = localStorage.getItem("accessToken");
+  const [accessToken, setAccessToken] = useState(
+    localStorage.getItem("userToken")
+  );
 
   const [user, setUser] = useState(null);
 
+  const handleLogin = (token) => {
+    setAccessToken(token);
+  };
+
   useEffect(() => {
-    async function verifyUser() {
+    async function verify() {
       try {
         if (!accessToken) {
           throw new Error();
         }
 
-        const { data } = await axios.post(
-          `${process.env.SERVICE_ENDPOINT}/auth/verify-user`,
-          { accessToken }
-        );
+        const { data } = await verifyUser({ token: accessToken });
 
-        setUser({ isAuthorized: true, data: data.body });
+        setUser({ isAuthorized: true, data: data });
       } catch (e) {
-        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userToken");
         setUser({ isAuthorized: false });
       }
     }
 
-    verifyUser();
+    verify();
   }, [accessToken]);
 
   // Show loading until user verification is complete
@@ -55,8 +59,14 @@ function App() {
     <UserContext.Provider value={user}>
       <BrowserRouter>
         <Routes>
-          <Route path="/sign-in" element={<LoginPage />} />
-          <Route path="/sign-up" element={<RegisterPage />} />
+          <Route
+            path="/sign-in"
+            element={<LoginPage handleLogin={handleLogin} />}
+          />
+          <Route
+            path="/sign-up"
+            element={<RegisterPage handleLogin={handleLogin} />}
+          />
 
           <Route
             path="/"
@@ -75,6 +85,14 @@ function App() {
             }
           />
           <Route
+            path="/blog-edit/:blogId"
+            element={
+              <MainLayout>
+                <CreateBlogPage />
+              </MainLayout>
+            }
+          />
+          <Route
             path="/my-blogs"
             element={
               <MainLayout>
@@ -84,7 +102,7 @@ function App() {
           />
 
           <Route
-            path="/blog"
+            path="/blog/:blogId"
             element={
               <MainLayout>
                 <BlogDetailsPage />

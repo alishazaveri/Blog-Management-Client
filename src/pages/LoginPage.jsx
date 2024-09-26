@@ -1,32 +1,39 @@
 import { Form, Formik } from "formik";
-import { useState } from "react";
+import { useContext, useEffect } from "react";
 import { userData } from "../data/user";
-import { Input, Select } from "antd";
+import { Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/user.service";
+import { UserContext } from "../App";
 
-const LoginPage = () => {
+const LoginPage = ({ handleLogin }) => {
   const navigate = useNavigate();
+  const user = useContext(UserContext);
 
-  const [buttonLoading, setButtonLoading] = useState(false);
-
-  // useEffect(() => {
-  //   if (user && user._id) {
-  //     if (user.role === "admin") {
-  //       redirect("/admin/gamelist");
-  //     } else {
-  //       redirect("/user/gamelist");
-  //     }
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (user && user._id) {
+      navigate("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const onLoginClick = async (values) => {
     const { emailId, password } = values;
-    setButtonLoading(true);
-    // login api
+
+    const response = await loginUser({ emailId, password });
+
+    if (response.data) {
+      handleLogin(response.data);
+      navigate("/");
+    }
   };
 
   const onSignUpClick = () => {
     navigate("/sign-up");
+  };
+
+  const onLogoClick = () => {
+    navigate("/");
   };
 
   return (
@@ -50,11 +57,12 @@ const LoginPage = () => {
             <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img
+                  onClick={onLogoClick}
                   src="/logo.png"
                   alt="logo"
                   width="200"
                   height="200"
-                  className="mx-auto h-20 w-auto"
+                  className="mx-auto h-20 w-auto cursor-pointer"
                 />
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                   Log in to your account

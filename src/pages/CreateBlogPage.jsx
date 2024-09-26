@@ -1,48 +1,73 @@
 import "react-quill/dist/quill.snow.css";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import CustomLoading from "../components/CustomLoading";
 import { Field, Form, Formik } from "formik";
 import { blogData } from "../data/blog";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import ReactQuill from "react-quill";
+import { addBlog, getBlogById, updateBlogById } from "../services/blog.service";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CreateGamePage = () => {
-  let gameId = "";
+const CreateBlogPage = () => {
+  const navigate = useNavigate();
+
+  const { blogId } = useParams();
 
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(false);
-  const [game, setGame] = useState();
+  const [blog, setBlog] = useState();
 
   useEffect(() => setLoading(false), []);
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   async function getGame() {
-  //     if (gameId) {
-  //       const { data } = await getGameById({ gameId: gameId  });
+  useEffect(() => {
+    setLoading(true);
+    async function getBlog() {
+      if (blogId) {
+        const response = await getBlogById({ blogId });
 
-  //       if (data.data) {
-  //         setNames({
-  //           image: data.data.imageUrl,
-  //           video: data.data.videoUrl,
-  //         });
+        if (response.data) {
+          setBlog(response.data);
+        }
+      }
+      setLoading(false);
+    }
 
-  //         setGame(data.data);
-  //       }
-  //     }
-  //     setLoading(false);
-  //   }
+    getBlog();
+  }, [blogId]);
 
-  //   getGame();
-  // }, [gameId]);
-
-  const onCreateGameClick = async (values) => {
+  const onCreateBlogClick = async (values) => {
+    const { blogImageUrl, title, description } = values;
     setButtonLoading(true);
+
+    const response = await addBlog({ blogImageUrl, title, description });
 
     setButtonLoading(false);
 
-    // router.push("/admin/gamelist");
+    if (response.data) {
+      message.success("Blog created successfully");
+
+      navigate("/");
+    }
+  };
+
+  const onEditBlogClick = async (values) => {
+    const { blogImageUrl, title, description } = values;
+    setButtonLoading(true);
+
+    const response = await updateBlogById({
+      blogId,
+      blogImageUrl,
+      title,
+      description,
+    });
+
+    setButtonLoading(false);
+
+    if (response.data) {
+      message.success("Blog edited successfully");
+      navigate("/my-blogs");
+    }
   };
 
   //   setButtonLoading(true);
@@ -74,7 +99,7 @@ const CreateGamePage = () => {
   //   values.bonusPoints = +(values.bonusPoints || 10);
 
   //   await updateGameById({
-  //     gameId: gameId as string,
+  //     blogId: blogId as string,
   //     ...values,
   //     imageUrl: iUrl ? iUrl : names.image,
   //     videoUrl: vUrl ? vUrl : names.video,
@@ -93,10 +118,10 @@ const CreateGamePage = () => {
         <Formik
           enableReinitialize
           initialValues={
-            game && game._id ? { ...game } : { ...blogData.BlogInitialValues }
+            blog && blog._id ? { ...blog } : { ...blogData.BlogInitialValues }
           }
           onSubmit={(values) => {
-            onCreateGameClick(values);
+            blogId ? onEditBlogClick(values) : onCreateBlogClick(values);
           }}
           validationSchema={blogData.BlogValidation}
         >
@@ -130,7 +155,7 @@ const CreateGamePage = () => {
 
                 <div className="w-full">
                   <div className="mt-5">
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={handleSubmit} autoComplete="off">
                       <div className="relative mt-6">
                         <Field
                           type="text"
@@ -152,6 +177,31 @@ const CreateGamePage = () => {
                             <div className="text text-red-500">
                               {" "}
                               {errors.title}
+                            </div>
+                          )}
+                      </div>
+
+                      <div className="relative mt-6">
+                        <Field
+                          type="text"
+                          name="blogImageUrl"
+                          placeholder="Blog Image Url"
+                          className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
+                          autoComplete="false"
+                        />
+                        <label
+                          htmlFor="blogImageUrl"
+                          className=" pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-500 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-500"
+                        >
+                          Blog Image Url
+                        </label>
+
+                        {errors.blogImageUrl &&
+                          touched.blogImageUrl &&
+                          typeof errors.blogImageUrl === "string" && (
+                            <div className="text text-red-500">
+                              {" "}
+                              {errors.blogImageUrl}
                             </div>
                           )}
                       </div>
@@ -187,7 +237,7 @@ const CreateGamePage = () => {
                           className="w-full "
                           size="large"
                         >
-                          {gameId ? "Edit Blog" : "Create Blog"}
+                          {blogId ? "Edit Blog" : "Create Blog"}
                         </Button>
                       </div>
                     </Form>
@@ -202,4 +252,4 @@ const CreateGamePage = () => {
   );
 };
 
-export default CreateGamePage;
+export default CreateBlogPage;
