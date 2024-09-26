@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export const SERVICE = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL,
+  baseURL: "https://blog-management-ad3d.onrender.com",
   withCredentials: true,
 });

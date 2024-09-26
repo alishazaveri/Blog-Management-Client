@@ -36,7 +36,7 @@ const BlogDetailsPage = () => {
           {blog && blog._id ? (
             <div className="max-w-3xl mx-auto">
               <div className="py-8">
-                <h1 className="text-3xl font-bold mb-2">Blog post title</h1>
+                <h1 className="text-3xl font-bold mb-2">{blog.title}</h1>
                 <p className="text-gray-500 text-sm">
                   Published on{" "}
                   {format(new Date(blog.createdAt), "MMM dd, yyyy")} by{" "}
