@@ -1,27 +1,33 @@
-import React, { useContext, useEffect, useState } from "react";
-import BlogCard from "../components/BlogCard";
-import { UserContext } from "../App";
+import React, { useEffect, useState } from "react";
 import MyBlogCard from "../components/MyBlogCard";
 import { getAllBlogsByUserId } from "../services/blog.service";
 import CustomLoading from "../components/CustomLoading";
 import CustomEmptyState from "../components/EmptyState";
-import { useNavigate } from "react-router-dom";
+import CustomPagination from "../components/CustomPagination";
 
 const MyBlogsPage = () => {
-  const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [totalCount, setTotalCount] = useState(0);
+
+  const handlePagination = ({ pageNumber }) => {
+    setCurrentPage(pageNumber);
+  };
 
   useEffect(() => {
     getBlogs();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
 
   async function getBlogs() {
     setLoading(true);
-    const response = await getAllBlogsByUserId();
+    const response = await getAllBlogsByUserId({ currentPage });
 
     if (response && response.data) {
       setBlogs(response.data);
+      setTotalCount(response.totalCount);
     }
 
     setLoading(false);
@@ -57,6 +63,12 @@ const MyBlogsPage = () => {
           </div>
         )}
       </section>
+
+      <CustomPagination
+        currentPage={currentPage}
+        length={totalCount}
+        handlePagination={handlePagination}
+      />
     </div>
   );
 };
