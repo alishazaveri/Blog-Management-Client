@@ -32,7 +32,7 @@ const CustomPagination = ({ length, handlePagination, currentPage }) => {
   return (
     <div>
       {paginationNumbers.length > 1 && (
-        <ol className="flex justify-end text-sm font-medium space-x-1 mt-5">
+        <ol className="flex justify-end text-sm font-medium space-x-1  mb-5">
           <li>
             <button
               onClick={onLeftArrowClick}

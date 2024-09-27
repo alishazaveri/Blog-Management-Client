@@ -32,6 +32,10 @@ const RegisterPage = ({ handleLogin }) => {
     navigate("/sign-in");
   };
 
+  const onLogoClick = () => {
+    navigate("/");
+  };
+
   return (
     <>
       <Formik
@@ -53,11 +57,12 @@ const RegisterPage = ({ handleLogin }) => {
             <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img
+                  onClick={onLogoClick}
                   src="/logo.png"
                   alt="logo"
                   width="200"
                   height="200"
-                  className="mx-auto h-20 w-auto"
+                  className="mx-auto h-20 w-auto cursor-pointer"
                 />
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                   Register your account
