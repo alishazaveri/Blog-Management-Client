@@ -11,7 +11,7 @@ const RegisterPage = ({ handleLogin }) => {
   const user = useContext(UserContext);
 
   useEffect(() => {
-    if (user && user._id) {
+    if (user && user.isAuthorized) {
       navigate("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

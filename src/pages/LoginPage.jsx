@@ -11,7 +11,12 @@ const LoginPage = ({ handleLogin }) => {
   const user = useContext(UserContext);
 
   useEffect(() => {
-    if (user && user._id) {
+    handleLogin(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (user && user.isAuthorized) {
       navigate("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
