@@ -37,6 +37,7 @@ const RegisterValidation = Yup.object().shape({
     ),
   password: Yup.string()
     .matches(
+      // eslint-disable-next-line no-useless-escape
       /^(?=.*[a-zA-Z])(?=.*[!@#\$%\^&\*])(?=.{6,})/,
       "Password must be atleast 6 letter long with atleast one special character"
     )
