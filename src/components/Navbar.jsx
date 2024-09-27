@@ -1,4 +1,4 @@
-import { AuditOutlined, SearchOutlined } from "@ant-design/icons";
+import { AuditOutlined } from "@ant-design/icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../App";
 import { useNavigate } from "react-router-dom";
@@ -80,7 +80,7 @@ const Navbar = () => {
             onClick={onCreateBlogClick}
           >
             <AuditOutlined className="text-3xl" />
-            <span className="">Create Blog</span>
+            <span className="hidden sm:block">Create Blog</span>
           </div>
           {user && user.isAuthorized ? (
             <>
@@ -95,7 +95,7 @@ const Navbar = () => {
                 <img
                   className="sm:w-10 sm:h-10 w-8 h-8 rounded-full"
                   src={`${user.data.imageUrl}`}
-                  alt="user photo"
+                  alt={user.data.username}
                 />
               </button>
               {dropdownOpen && (
@@ -144,13 +144,13 @@ const Navbar = () => {
           ) : (
             <div className="flex justify-between items-center">
               <button
-                className=" py-2 px-4 mr-2 border rounded-full bg-black hover:bg-gray-700 text-white text-center"
+                className="font-thin sm:font-normal sm:py-2 sm:px-4 sm:mr-2 p-1 px-2 border mr-1 rounded-full bg-black hover:bg-gray-700 text-white text-center "
                 onClick={onSignInClick}
               >
                 Sign In
               </button>
               <button
-                className=" py-2 px-4 mr-2 border rounded-full bg-[#4da58d] hover:bg-[#3f917b] text-white text-center"
+                className="font-thin sm:font-normal sm:py-2 sm:px-4 sm:mr-2 p-1 px-2 border rounded-full bg-[#4da58d] hover:bg-[#3f917b] text-white text-center"
                 onClick={onSignUpClick}
               >
                 Sign Up

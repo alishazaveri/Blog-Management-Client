@@ -165,7 +165,7 @@ const RegisterPage = ({ handleLogin }) => {
                       type="submit"
                       className="flex w-full justify-center rounded-md bg-[#4da58d] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#469781] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#469781]"
                     >
-                      Sign In
+                      Sign Up
                     </button>
                   </div>
                 </Form>
